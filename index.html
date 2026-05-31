@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DLF Assessor Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15201f; --ink2:#2b3b39; --paper:#11201d; --panel:#172b27; --panel2:#1d332e;
+  --cream:#f3ecdd; --line:#33493f; --line2:#42594c; --green:#7fb069; --green-d:#3f6b46;
+  --saff:#e2902f; --saff-d:#b96f1d; --red:#e2685f; --amber:#e6b450; --blue:#79a8d6; --muted:#9fb0a3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+  radial-gradient(1100px 600px at 115% -8%, #1d3a31 0, transparent 55%),
+  radial-gradient(900px 600px at -12% 108%, #20302a 0, transparent 55%),
+  var(--paper); color:var(--cream); font-family:"Karla",system-ui,sans-serif;font-size:15.5px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 130px}
+header.hero{border:1.5px solid var(--line2);border-radius:18px;background:linear-gradient(180deg,var(--panel2),var(--panel));padding:22px 24px;position:relative;overflow:hidden;box-shadow:0 20px 50px -30px #000}
+.kicker{font:700 12px/1 "Karla";letter-spacing:.24em;text-transform:uppercase;color:var(--saff)}
+h1{font-family:"Fraunces";font-weight:700;font-size:clamp(28px,5vw,44px);margin:.25em 0 .1em;letter-spacing:-.01em;color:#fbf6ea}
+.sub{color:var(--muted);max-width:64ch;font-size:15px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+select,input[type=text],input[type=number],textarea{font-family:inherit;color:var(--cream);background:#0e1b18;border:1.4px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:15px;outline:none}
+select:focus,input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(127,176,105,.18)}
+.toolbar select{min-width:230px}
+.btn{font-family:inherit;font-weight:700;font-size:14px;border-radius:10px;padding:10px 15px;cursor:pointer;border:1.5px solid transparent}
+.btn.s{background:var(--saff);color:#1a1305}.btn.g{background:transparent;color:var(--cream);border-color:var(--line2)}
+.btn.green{background:var(--green-d);color:#eafbe7}
+.btn:active{transform:translateY(1px)}
+.layout{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
+.card{border:1.5px solid var(--line2);border-radius:16px;background:linear-gradient(180deg,var(--panel2),var(--panel));overflow:hidden;box-shadow:0 18px 44px -32px #000}
+.ch{display:flex;align-items:baseline;gap:11px;padding:13px 18px;background:#0f1c19;border-bottom:1.5px solid var(--line)}
+.ch .n{font-family:"Fraunces";font-weight:900;font-size:17px;color:var(--saff)}
+.ch h2{font-family:"Fraunces";font-weight:600;font-size:18px;margin:0;color:#fbf6ea}
+.ch .hint{margin-left:auto;font:600 11.5px/1.3 "Karla";color:var(--muted);text-align:right;max-width:46%}
+.cb{padding:16px 18px}
+.mis{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+@media(max-width:760px){.mis{grid-template-columns:repeat(3,1fr)}}
+.stat{background:#0e1b18;border:1.4px solid var(--line);border-radius:12px;padding:11px 8px;text-align:center}
+.stat .v{font-family:"Fraunces";font-weight:700;font-size:26px;color:#fbf6ea;line-height:1}
+.stat .l{font:600 10.5px/1.2 "Karla";color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:6px}
+.flag{margin-top:12px;border-radius:10px;padding:10px 13px;font-weight:700;font-size:14px;border:1.4px solid}
+.flag.red{background:rgba(226,104,95,.12);border-color:var(--red);color:#ffb3ac}
+.flag.amber{background:rgba(230,180,80,.12);border-color:var(--amber);color:#ffdf9e}
+.flag.green{background:rgba(127,176,105,.14);border-color:var(--green);color:#cdeec0}
+.rolenote{margin-top:10px;font-size:13.5px;color:var(--muted);font-style:italic}
+.scrow{padding:12px 0;border-bottom:1px dashed var(--line)}
+.scrow:last-child{border-bottom:0}
+.scname{font-weight:700;font-size:15px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.pill{font:600 11px/1 "Karla";padding:4px 8px;border-radius:99px;border:1px solid var(--line2);color:var(--muted)}
+.pill.rp{color:#ffdf9e;border-color:var(--amber)} .pill.sf{color:#bcdcff;border-color:#3b5878}
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:9px}
+@media(max-width:600px){.dual{grid-template-columns:1fr}}
+.scoreunit label{font:600 11.5px/1 "Karla";color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.srow{display:flex;align-items:center;gap:12px;margin-top:5px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--clr,var(--green)) var(--p,0%),#0e1b18 var(--p,0%));border:1px solid var(--line2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;margin-top:-8px;width:22px;height:22px;border-radius:50%;background:#fbf6ea;border:2.4px solid var(--clr,var(--green))}
+input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:#0e1b18;border:1px solid var(--line2)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fbf6ea;border:2.4px solid var(--clr,var(--green))}
+.sv{font-family:"Fraunces";font-weight:700;font-size:20px;min-width:42px;text-align:center}
+.totline{display:flex;gap:18px;justify-content:flex-end;margin-top:12px;font-weight:700;color:var(--muted)}
+.totline b{color:#fbf6ea;font-family:"Fraunces"}
+.qd{padding:12px 0;border-bottom:1px dashed var(--line)}
+.qd:last-child{border-bottom:0}
+.qlab{font-weight:700;font-size:15px}
+.selfquote{background:#0e1b18;border-left:3px solid var(--green-d);border-radius:0 8px 8px 0;padding:9px 12px;font-size:13.5px;color:#d7e6d4;margin-bottom:9px;white-space:pre-wrap}
+.selfquote .tagq{display:block;font:700 10px/1 "Karla";letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:5px}
+.selfquote.empty{color:var(--muted);font-style:italic}
+.qgrid{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:start}
+@media(max-width:600px){.qgrid{grid-template-columns:1fr}}
+textarea{width:100%;min-height:62px;resize:vertical;line-height:1.45}
+.field{margin-bottom:15px}.field:last-child{margin-bottom:0}
+.field>label{display:block;font-weight:700;margin-bottom:3px}
+.qprompt{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+.seg{display:inline-flex;border:1.4px solid var(--line2);border-radius:10px;overflow:hidden;background:#0e1b18}
+.seg button{font-family:inherit;font-weight:700;font-size:13.5px;border:0;background:transparent;color:var(--cream);padding:8px 15px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--green-d);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-weight:600;font-size:13px;border:1.4px solid var(--line2);background:#0e1b18;color:var(--cream);border-radius:99px;padding:7px 12px;cursor:pointer;user-select:none}
+.chip[aria-pressed=true]{background:var(--saff);border-color:var(--saff);color:#1a1305}
+.expg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:760px){.expg{grid-template-columns:1fr 1fr}}
+.meterwrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.gauge{--val:0;position:relative;width:128px;height:128px;border-radius:50%;background:conic-gradient(var(--saff) calc(var(--val)*1%), #0e1b18 0); display:grid;place-items:center;flex:0 0 auto}
+.gauge:after{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--panel)}
+.gauge .num{position:relative;text-align:center}
+.gauge .num b{font-family:"Fraunces";font-weight:700;font-size:30px;color:#fbf6ea}
+.gauge .num span{display:block;font:600 11px/1 "Karla";color:var(--muted);margin-top:3px}
+.recwrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.rec{font-family:inherit;font-weight:700;font-size:15px;color:var(--cream);background:#0e1b18;border:1.5px solid var(--line2);border-radius:10px;padding:11px 12px;min-width:230px}
+.hrstep{margin-top:14px;border:1.4px dashed var(--line2);border-radius:12px;padding:13px 15px;font-size:13.5px;color:var(--muted);background:#0e1b18}
+.hrstep b{color:#fbf6ea;font-family:"Karla"}
+.hrstep.go{border-color:var(--green);border-style:solid}
+.hrstep.gate{border-color:var(--red);border-style:solid}
+.hrstep.hold{border-color:var(--blue);border-style:solid}
+.actionbar{position:fixed;left:0;right:0;bottom:0;background:rgba(8,16,14,.97);backdrop-filter:blur(6px);border-top:1.5px solid #0a1311;padding:12px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:30}
+.actionbar .who{color:var(--saff);font-family:"Fraunces";font-weight:700;font-size:16px;margin-right:auto}
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(20px);background:#fbf6ea;color:#15201f;padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;opacity:0;transition:.3s;pointer-events:none;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+dialog{border:1.5px solid var(--line2);border-radius:16px;padding:0;max-width:620px;width:94%;background:var(--panel2);color:var(--cream);box-shadow:0 40px 90px -30px #000}
+dialog::backdrop{background:rgba(4,10,8,.6)}
+.dh{background:var(--saff);color:#1a1305;padding:15px 20px;font-family:"Fraunces";font-weight:700;font-size:19px}
+.db{padding:18px 20px}
+.codebox{width:100%;min-height:96px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#0e1b18;border:1.4px solid var(--line2);border-radius:10px;padding:11px;color:#cfe3cc;word-break:break-all}
+.note{font-size:13px;color:var(--muted);margin:10px 0}
+.empty-hint{color:var(--muted);font-style:italic;padding:6px 0}
+.ev-label{color:var(--green) !important;font-style:italic;margin-top:9px}
+.ev-field{min-height:44px !important;font-size:13.5px}
+.seg-wide button{padding:8px 11px;font-size:13px}
+.traj-renew .gauge{background:conic-gradient(var(--green) calc(var(--val)*1%),#0e1b18 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="kicker">District Legal Fellowship · Annual Review 2026 · Assessor</div>
+    <h1>Live Evaluation Dashboard</h1>
+    <div class="sub">Open this during the one‑on‑one. Pick the fellow, paste their self‑assessment code to see their answers beside yours, score live, weigh conduct, verify expenditure, settle the MoU‑extension call, and export the master row to your Google Sheet.</div>
+    <div class="toolbar">
+      <select id="who"></select>
+      <input type="text" id="paste" placeholder="Paste fellow's DLF code here…" style="flex:1;min-width:220px">
+      <button class="btn g" id="importBtn">Load self‑assessment</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="card">
+      <div class="ch"><span class="n">★</span><h2>What the reporting system shows</h2><span class="hint">Reference only — absence in MIS ≠ absence of work</span></div>
+      <div class="cb">
+        <div class="mis" id="mis"></div>
+        <div class="flag amber" id="flag">Select a fellow to load their reported activity.</div>
+        <div class="rolenote" id="rolenote"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><span class="n">A</span><h2>Scorecard — Line Manager &amp; Director</h2><span class="hint">rp = reported in MIS · sf = fellow's self‑score</span></div>
+      <div class="cb" id="scorecard"></div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><span class="n">B</span><h2>Qualitative — their words, your score</h2></div>
+      <div class="cb" id="qual"></div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><span class="n">C</span><h2>Targeted probes</h2></div>
+      <div class="cb">
+        <div class="field"><label>Reporting — diagnose &amp; agree a fix</label>
+          <div class="selfquote" id="q_report"></div><textarea id="a_report" placeholder="What's the real bottleneck? What support did you agree?"></textarea></div>
+        <div class="field"><label>Case strategy — did they argue a live case well?</label>
+          <div class="selfquote" id="q_strategy"></div><textarea id="a_strategy" placeholder="Note their grasp of theory / next step / risk"></textarea></div>
+        <div class="field"><label>Media screenings → fact‑finding / LAC / case</label>
+          <div class="selfquote" id="q_media"></div><textarea id="a_media" placeholder="Did screenings actually convert into FF / LAC / filings? How credible is the chain?"></textarea></div>
+        <div class="field"><label>Networking built — organisations & officials/govt</label>
+          <div class="selfquote" id="q_neto"></div><div class="selfquote" id="q_netg"></div><textarea id="a_net" placeholder="Quality & usefulness of the relationships built; gaps to push on"></textarea></div>
+        <div class="field"><label>Using WhatsApp group for cases?</label>
+          <div class="seg" id="seg_wa"><button data-v="Yes">Yes</button><button data-v="Sometimes">Sometimes</button><button data-v="No">No</button></div>
+          <span id="q_wa" class="empty-hint" style="margin-left:10px"></span></div>
+        <div class="field"><label>Times strategised with leadership (#)</label>
+          <input type="number" id="a_times" min="0" style="width:110px"> <span id="q_times" class="empty-hint" style="margin-left:8px"></span></div>
+        <div class="field"><label>Community collaboration</label>
+          <div class="selfquote" id="q_comm"></div><textarea id="a_comm" placeholder="Visits, leaders, how it fed LAC turnout & referrals"></textarea></div>
+        <div class="field"><label>External stakeholders engaged (confirm / correct)</label>
+          <div class="chips" id="stake"></div></div>
+      </div>
+    </section>
+
+
+    <section class="card">
+      <div class="ch"><span class="n">◉</span><h2>360° Field Intelligence</h2><span class="hint">Co-fellow, community &amp; your own direct observations</span></div>
+      <div class="cb">
+        <div class="field"><label>Co-fellow observations</label>
+          <div class="qprompt">What do co-fellows, Sr.&nbsp;Anupriya or the Patna team say about this person's work quality, reliability and team contribution?</div>
+          <textarea id="f_peer" placeholder="Note what team members have said or observed…"></textarea></div>
+        <div class="field"><label>Community &amp; client voice</label>
+          <div class="qprompt">What have PLVs, community leaders, beneficiaries or referred clients said about this fellow — directly, via field visits, or in LAC feedback?</div>
+          <textarea id="f_community" placeholder="Community / PLV / beneficiary feedback…"></textarea></div>
+        <div class="dual">
+          <div class="field"><label>Critical positive incident</label>
+            <div class="qprompt">One thing you directly observed that showed this fellow at their best — a decision, an interaction, an initiative.</div>
+            <textarea id="f_pos" style="min-height:62px" placeholder="Describe what you saw…"></textarea></div>
+          <div class="field"><label>Critical concern (if any)</label>
+            <div class="qprompt">An incident or pattern that concerns you — conduct, reliability, gap between words and action. Leave blank if none.</div>
+            <textarea id="f_concern" style="min-height:62px" placeholder="Leave blank if none…"></textarea></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><span class="n">↗</span><h2>Growth Trajectory &amp; Potential</h2><span class="hint">Your synthesis after the full conversation</span></div>
+      <div class="cb">
+        <div class="dual">
+          <div class="field"><label>Year-on-year trajectory</label>
+            <div class="seg" id="seg_traj"><button data-v="Declining">Declining</button><button data-v="Steady">Steady</button><button data-v="Growing">Growing</button></div></div>
+          <div class="field"><label>Movement-lawyer potential</label>
+            <div class="seg" id="seg_pot"><button data-v="Emerging">Emerging</button><button data-v="Developing">Developing</button><button data-v="Movement-ready">Movement-ready</button></div></div>
+        </div>
+        <div class="dual" style="margin-top:14px">
+          <div class="field"><label>Core strength — one thing they do best</label>
+            <textarea id="g_strength" style="min-height:56px" placeholder="e.g. Builds client trust quickly, strong in bail hearings, meticulous documentation…"></textarea></div>
+          <div class="field"><label>Development priority for next term</label>
+            <textarea id="g_dev" style="min-height:56px" placeholder="e.g. Reporting discipline, fact-finding depth, community mobilisation…"></textarea></div>
+        </div>
+        <div class="field" style="margin-top:14px"><label>Self-assessment calibration</label>
+          <div class="qprompt">How accurately did the fellow assess their own work — strengths, impact, gaps?</div>
+          <div class="seg" id="seg_calib">
+            <button data-v="Aligned">Aligned — honest &amp; accurate</button>
+            <button data-v="Somewhat">Somewhat — minor gaps</button>
+            <button data-v="Diverges">Diverges significantly</button>
+          </div>
+          <textarea id="g_calib_note" placeholder="Where did their self-view match or diverge from what you observed?" style="margin-top:10px;min-height:52px"></textarea></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><span class="n">D</span><h2>Expenditure verification</h2><span class="hint">Clear payment only after bills are checked</span></div>
+      <div class="cb">
+        <div class="selfquote" id="q_exp"></div>
+        <div class="expg">
+          <div><label style="font:600 11.5px/1 Karla;color:var(--muted);text-transform:uppercase">Bills verified?</label>
+            <div class="seg" id="seg_ver" style="margin-top:6px"><button data-v="Yes">Yes</button><button data-v="Partly">Partly</button><button data-v="No">No</button></div></div>
+          <div><label style="font:600 11.5px/1 Karla;color:var(--muted);text-transform:uppercase">Approved (₹)</label><input type="number" id="a_appr" style="width:100%;margin-top:6px"></div>
+          <div><label style="font:600 11.5px/1 Karla;color:var(--muted);text-transform:uppercase">Cleared to pay?</label>
+            <div class="seg" id="seg_clr" style="margin-top:6px"><button data-v="Yes">Yes</button><button data-v="Hold">Hold</button></div></div>
+          <div><label style="font:600 11.5px/1 Karla;color:var(--muted);text-transform:uppercase">Verified by</label><input type="text" id="a_vby" style="width:100%;margin-top:6px" placeholder="Shashwat / Anupriya"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><span class="n">E</span><h2>Outcome — MoU extension decision</h2></div>
+      <div class="cb">
+        <div class="meterwrap">
+          <div class="gauge" id="gauge"><div class="num"><b id="composite">0</b><span>/ 120</span></div></div>
+          <div style="flex:1;min-width:240px">
+            <div class="totline" style="justify-content:flex-start"><span>LM&nbsp;<b id="lmtot">0</b>/60</span><span>Dir&nbsp;quant&nbsp;<b id="dqtot">0</b>/60</span><span>Dir&nbsp;qual&nbsp;<b id="dqual">0</b>/60</span></div>
+            <div class="recwrap">
+              <select class="rec" id="rec"><option value="">— renewal / extension call —</option><option>Renew</option><option>Renew with conditions</option><option>Hold / discuss</option><option>Do not renew</option></select>
+            </div>
+            <div class="hrstep" id="hrstep">Pick a recommendation to see the HR next step.</div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px"><label>Director's forward notes</label><textarea id="a_fwd" placeholder="Conditions, growth plan, next term's focus…"></textarea></div>
+        <div class="field"><label>Assets to reconcile at renewal / exit</label><div class="selfquote" id="q_assets"></div></div>
+        <div class="field"><label>Fellow's suggestions (captured)</label><div class="selfquote" id="q_sugg"></div></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="actionbar">
+  <span class="who" id="curwho">No fellow selected</span>
+  <button class="btn g" id="resetBtn">Clear</button>
+  <button class="btn g" id="csvBtn">Download CSV</button>
+  <button class="btn green" id="rowBtn">Copy master row → Sheet</button>
+  <button class="btn s" id="codeBtn">Export code</button>
+</div>
+
+<dialog id="dlg">
+  <div class="dh">Master record ready</div>
+  <div class="db">
+    <div class="note"><b>Copy master row</b> → click your Google Sheet cell A‑under‑headers → paste. One row = this fellow's complete record (self + your scores). The <b>code</b> below is a backup you can re‑import later.</div>
+    <textarea class="codebox" id="code" readonly></textarea>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn green" id="copyRow2">Copy master row</button>
+      <button class="btn s" id="copyCode2">Copy code</button>
+      <button class="btn g" id="closeDlg">Close</button>
+    </div>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+const FELLOWS={
+ "Mithilesh Kumar":{role:"District Legal Fellow",dist:"Bhagalpur",mis:{cases:0,court:1,ff:0,lac:0,train:0,stake:0},flag:"CRITICAL — no reports in the MIS",fc:"red",note:"Open here. Establish first whether this is a reporting failure or an activity failure — don't assume."},
+ "Md. Nawaz Hassan":{role:"District Legal Fellow",dist:"Araria",mis:{cases:13,court:20,ff:0,lac:0,train:0,stake:18},flag:"PARTIAL — stakeholder work strong, breadth thin",fc:"amber",note:"Highest stakeholder engagement (18). Probe why LAC / fact‑finding / training are unreported despite strong field presence."},
+ "Nagmani":{role:"District Legal Fellow",dist:"Purnia",mis:{cases:9,court:13,ff:1,lac:6,train:2,stake:7},flag:"GOOD — the most balanced reporter",fc:"green",note:"Cases, LACs, trainings, fact‑finding and stakeholders all present. Your benchmark — explore how he balances litigation with community work."},
+ "Tausif":{role:"District Legal Fellow",dist:"Katihar",mis:{cases:37,court:11,ff:0,lac:0,train:0,stake:0},flag:"PARTIAL — heaviest docket, no community reporting",fc:"amber",note:"Largest caseload by far (37) but zero LAC / fact‑finding / stakeholder reporting. Is litigation crowding out community work, or just unreported?"},
+ "Pintu Kumar Mehta":{role:"District Legal Fellow",dist:"Kishanganj",mis:{cases:17,court:71,ff:0,lac:3,train:0,stake:0},flag:"PARTIAL — outstanding court diligence",fc:"amber",note:"71 court‑attendance entries — by far the highest. Recognise it, then probe the thin fact‑finding / training / stakeholder reporting."},
+ "Sachina":{role:"Legal Fellow cum Patna Lawyer",dist:"Patna",mis:{cases:1,court:4,ff:0,lac:0,train:0,stake:0},flag:"VERIFY — Patna HC/SC work likely off‑tracker",fc:"amber",note:"Her HC/SC support work probably isn't in this district tracker. Ask her to walk her real docket and reconcile against the MIS."},
+ "Nitish Kumar":{role:"Social Worker",dist:"Purnia",mis:{cases:0,court:0,ff:0,lac:2,train:0,stake:0},flag:"VERIFY — mobilisation not in the legal MIS",fc:"amber",note:"Social‑work role — case metrics don't apply. Evaluate on community mobilisation, LAC turnout, follow‑ups and field intelligence."},
+ "Sr. Anupriya":{role:"DLF Coordinator (Patna)",dist:"Patna / All districts",mis:{cases:8,court:4,ff:8,lac:7,train:0,stake:0},flag:"GOOD — fieldwork + coordination",fc:"green",note:"Wears two hats. Most fact‑findings, leads Patna LACs. Evaluate her own delivery AND her line‑manager read on each fellow."}
+};
+const INDICATORS=[
+ {key:"lac",label:"Legal Aid Camps",mis:"lac"},
+ {key:"train",label:"Paralegal / Legal Trainings",mis:"train"},
+ {key:"ff",label:"Fact Finding",mis:"ff"},
+ {key:"media",label:"Media Screenings → FF / LAC / case",mis:null},
+ {key:"pil",label:"PIL Leads",mis:null},
+ {key:"cases",label:"Cases Filed / Handled",mis:"cases"}
+];
+const DIMS=[
+ {key:"exp",   label:"Experience & Growth",
+  np:"What growth did you directly observe this year? Where did they start vs where are they now?",
+  ep:"name a moment that showed real development — a case, a decision, an interaction"},
+ {key:"chal",  label:"Response to Challenges",
+  np:"How did they handle setbacks? Were they resourceful and honest about obstacles?",
+  ep:"describe a specific challenge and how they actually responded"},
+ {key:"learn", label:"Learnings & Application",
+  np:"Is there evidence they applied what they say they learned — or do learnings stay theoretical?",
+  ep:"where did a stated learning show up in their actual work this year"},
+ {key:"impact",label:"Impact & Client-centredness",
+  np:"Can you verify or deepen their impact story? Were they genuinely client-centred in approach?",
+  ep:"name a case or activity where you observed them put the client first"},
+ {key:"team",  label:"Teamwork & Janman-alignment",
+  np:"How do co-fellows and Anupriya describe them? Did they support or strain the team? Aligned with Janman values?",
+  ep:"a specific example of them supporting a co-fellow, escalating well, or contributing to the collective"},
+ {key:"conduct",label:"Conduct, Confidentiality & Safeguarding",
+  np:"Any incident — positive or concerning — around client safety, confidentiality or professional conduct?",
+  ep:"if there was a concern, describe it clearly and factually; if exemplary, note it"}
+];
+const STAKEHOLDERS=["Police","One Stop Centre (OSC)","Women & Child Dev. (WCD)","CNLU / Law school","Juvenile Justice Board (JJB)","Child Welfare Committee (CWC)","Social Welfare Dept.","DALSA / DLSA","Public Prosecutors","Paralegal Volunteers (PLVs)","Local elected reps","Other Govt. departments","Other Civil Society Orgs."];
+const COLS=["Timestamp","Fellow","Role","District","Stage","Self: LAC /10","Self: Trainings /10","Self: Fact-finding /10","Self: Media screenings /10","Self: PIL /10","Self: Cases /10","Self: Experience","Self: Challenges & overcome","Self: Learnings","Self: Impact","Self: Teamwork","Self: Reporting bottleneck","Self: Case strategy","Self: Media screenings — outcomes","Self: Networking — organisations","Self: Networking — officials/govt","Self: WhatsApp use","Self: Times strategised","Self: Stakeholders engaged","Self: Community work","Self: Assets currently held","Self: Confidentiality affirmed","Self: Concern to raise","Self: Suggestions","Self: Advance","Self: Claimed","Self: Pending docs","Assr: LM total /60","Assr: Director quant /60","Assr: Director qual /60","Assr: Composite /120","Assr: Experience note","Assr: Challenges note","Assr: Learnings note","Assr: Impact note","Assr: Teamwork note","Assr: Conduct & safeguarding note","Assr: Reporting note","Assr: Case-strategy note","Assr: Media screenings note","Assr: Networking note","Assr: WhatsApp (Y/N)","Assr: Times strategised","Assr: Community note","Assr: Stakeholders engaged","Exp: Verified (Y/N)","Exp: Approved","Exp: Cleared to pay","Exp: Verified by","Assr: B — Exp evidence","Assr: B — Chal evidence","Assr: B — Learn evidence","Assr: B — Impact evidence","Assr: B — Team evidence","Assr: B — Conduct evidence","Assr: 360 — Co-fellow voice","Assr: 360 — Community voice","Assr: 360 — Positive incident","Assr: 360 — Concern","Assr: Trajectory","Assr: Movement potential","Assr: Core strength","Assr: Dev priority","Assr: Self-calibration","Assr: Self-calibration note","Renewal recommendation","HR next step","Director forward notes","MIS flag"];
+
+const $=id=>document.getElementById(id);
+const clean=v=>(v==null?"":String(v)).replace(/[\t\n\r]+/g," ").trim();
+let SELF=null;
+// storage helper: Cowork SDK with localStorage fallback
+const stor={
+  get:async k=>{if(window.storage){const r=await window.storage.get(k);return r?.value??null;}try{return localStorage.getItem(k)}catch(e){return null}},
+  set:(k,v)=>{if(window.storage)window.storage.set(k,v).catch(()=>{});else try{localStorage.setItem(k,v)}catch(e){}},
+  del:async k=>{if(window.storage)await window.storage.delete(k).catch(()=>{});else try{localStorage.removeItem(k)}catch(e){}}
+};
+
+const who=$("who"); who.innerHTML='<option value="">— select fellow —</option>'+Object.keys(FELLOWS).map(n=>`<option>${n}</option>`).join("");
+
+$("scorecard").innerHTML=INDICATORS.map(i=>`
+ <div class="scrow">
+   <div class="scname">${i.label}
+     <span class="pill rp" id="rp_${i.key}">rp –</span>
+     <span class="pill sf" id="sf_${i.key}">sf –</span></div>
+   <div class="dual">
+     <div class="scoreunit"><label>Line Manager</label><div class="srow"><input type="range" min="0" max="10" value="0" id="lm_${i.key}" style="--clr:var(--green)"><span class="sv" id="lmv_${i.key}">0</span></div></div>
+     <div class="scoreunit"><label>Director</label><div class="srow"><input type="range" min="0" max="10" value="0" id="dr_${i.key}" style="--clr:var(--saff)"><span class="sv" id="drv_${i.key}">0</span></div></div>
+   </div>
+ </div>`).join("")+`<div class="totline"><span>LM total <b id="lmtot2">0</b>/60</span><span>Director total <b id="drtot2">0</b>/60</span></div>`;
+INDICATORS.forEach(i=>{["lm","dr"].forEach(k=>{const r=$(k+"_"+i.key);const v=$(k+"v_"+i.key);const f=()=>{v.textContent=r.value;r.style.setProperty('--p',(r.value*10)+'%');recompute()};r.oninput=f;f();});});
+
+$("qual").innerHTML=DIMS.map(d=>`
+ <div class="qd">
+   <div class="qlab">${d.label}</div>
+   <div class="selfquote empty" id="sq_${d.key}"><span class="tagq">fellow's words</span>—</div>
+   <div class="qgrid">
+     <div>
+       <div class="qprompt">${d.np}</div>
+       <textarea id="dn_${d.key}" placeholder="Your assessment…"></textarea>
+       <div class="qprompt ev-label">◎ Behavioral evidence — ${d.ep}</div>
+       <textarea id="de_${d.key}" class="ev-field" placeholder="Describe a specific instance…"></textarea>
+     </div>
+     <div class="scoreunit"><label>Director /10</label><div class="srow"><input type="range" min="0" max="10" value="0" id="dq_${d.key}" style="--clr:var(--saff)"><span class="sv" id="dqv_${d.key}">0</span></div></div>
+   </div>
+ </div>`).join("");
+DIMS.forEach(d=>{const r=$("dq_"+d.key);const v=$("dqv_"+d.key);const f=()=>{v.textContent=r.value;r.style.setProperty('--p',(r.value*10)+'%');recompute()};r.oninput=f;f();$("dn_"+d.key).oninput=saveDraft;$("de_"+d.key).oninput=saveDraft;});
+
+$("stake").innerHTML=STAKEHOLDERS.map((s,i)=>`<span class="chip" data-i="${i}" aria-pressed="false">${s}</span>`).join("");
+document.querySelectorAll("#stake .chip").forEach(c=>c.onclick=()=>{c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true");saveDraft()});
+
+function seg(id,cb){document.querySelectorAll("#"+id+" button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#"+id+" button").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");cb&&cb(b.dataset.v);saveDraft()})}
+seg("seg_wa");seg("seg_ver");seg("seg_clr");seg("seg_traj");seg("seg_pot");seg("seg_calib");
+["a_report","a_strategy","a_media","a_net","a_comm","a_times","a_appr","a_vby","a_fwd",
+ "f_peer","f_community","f_pos","f_concern","g_strength","g_dev","g_calib_note"].forEach(id=>$(id).oninput=saveDraft);
+$("rec").onchange=()=>{renderHRStep();saveDraft()};
+
+who.onchange=()=>{ renderMIS(); $("curwho").textContent=who.value||"No fellow selected"; loadDraft(); };
+function renderMIS(){
+ const f=FELLOWS[who.value];
+ const stats=[["cases","Cases"],["court","Court"],["ff","Fact‑find"],["lac","LACs"],["train","Trainings"],["stake","Stakeholder"]];
+ if(!f){$("mis").innerHTML=stats.map(s=>`<div class="stat"><div class="v">–</div><div class="l">${s[1]}</div></div>`).join("");$("flag").className="flag amber";$("flag").textContent="Select a fellow to load their reported activity.";$("rolenote").textContent="";INDICATORS.forEach(i=>{$("rp_"+i.key).textContent="rp –"});return;}
+ $("mis").innerHTML=stats.map(s=>`<div class="stat"><div class="v">${f.mis[s[0]]}</div><div class="l">${s[1]}</div></div>`).join("");
+ $("flag").className="flag "+f.fc; $("flag").textContent=f.flag; $("rolenote").textContent=f.note;
+ INDICATORS.forEach(i=>{$("rp_"+i.key).textContent="rp "+(i.mis?f.mis[i.mis]:"–")});
+}
+
+$("importBtn").onclick=()=>{
+ const raw=$("paste").value.trim(); if(!raw){toast("Paste the fellow's code first");return}
+ try{
+   const json=raw.startsWith("DLF1::")?raw.slice(6):raw;
+   const o=JSON.parse(decodeURIComponent(atob(json)));
+   SELF=o;
+   if(o.who&&FELLOWS[o.who]){who.value=o.who;renderMIS();$("curwho").textContent=o.who;loadDraft();}
+   reflectSelf();
+   (o.stake||[]).forEach(s=>{const i=STAKEHOLDERS.indexOf(s);if(i>=0)document.querySelector('#stake .chip[data-i="'+i+'"]').setAttribute("aria-pressed","true")});
+   if(o.wa){document.querySelectorAll("#seg_wa button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===o.wa))}
+   if(o.times&&!$("a_times").value)$("a_times").value=o.times;
+   toast("Self‑assessment loaded ✓"); saveDraft();
+ }catch(e){toast("Couldn't read that code")}
+};
+function quote(tag,txt){txt=clean(txt);return '<span class="tagq">'+tag+'</span>'+(txt?txt:"—")}
+function reflectSelf(){
+ const o=SELF;if(!o)return;
+ INDICATORS.forEach(i=>{$("sf_"+i.key).textContent="sf "+(o.scores?.[i.key]??"–")});
+ DIMS.forEach(d=>{const el=$("sq_"+d.key);let tx="";
+   if(d.key==="conduct"){tx=(o.conf?"Confidentiality affirmed: "+o.conf:"")+(o.concern?" · Concern raised: "+o.concern:"");}
+   else tx=clean(o.dims?.[d.key]);
+   el.innerHTML='<span class="tagq">fellow\'s words</span>'+(tx||"—");el.className="selfquote"+(tx?"":" empty")});
+ $("q_report").innerHTML=quote("fellow: reporting",o.report);
+ $("q_strategy").innerHTML=quote("fellow: case strategy",o.strategy);
+ $("q_media").innerHTML=quote("fellow: media screenings",o.media);
+ $("q_neto").innerHTML=quote("fellow: networking — orgs",o.neto);
+ $("q_netg").innerHTML=quote("fellow: networking — officials/govt",o.netg);
+ $("q_comm").innerHTML=quote("fellow: community",o.comm);
+ $("q_wa").textContent=o.wa?("self: "+o.wa+(o.wa_note?" — "+o.wa_note:"")):"";
+ $("q_times").textContent=o.times?("self: "+o.times):"";
+ $("q_exp").innerHTML=quote("fellow: claimed","Advance ₹"+(o.adv||0)+" · Claimed ₹"+(o.claim||0)+(o.pend?" · Pending: "+o.pend:""));
+ $("q_assets").innerHTML=quote("fellow: assets held",o.assets);
+ $("q_sugg").innerHTML=quote("fellow: suggestion",o.sugg);
+}
+
+function recompute(){
+ let lm=0,dq=0;INDICATORS.forEach(i=>{lm+=+$("lm_"+i.key).value;dq+=+$("dr_"+i.key).value});
+ let qual=0;DIMS.forEach(d=>qual+=+$("dq_"+d.key).value);
+ const comp=dq+qual;
+ $("lmtot").textContent=lm;$("lmtot2").textContent=lm;$("dqtot").textContent=dq;$("drtot2").textContent=dq;$("dqual").textContent=qual;
+ $("composite").textContent=comp;
+ const pct=Math.round(comp/120*100);$("gauge").style.setProperty("--val",pct);
+ const g=$("gauge");g.style.background=`conic-gradient(${comp>=84?'var(--green)':comp>=48?'var(--saff)':'var(--red)'} ${pct}%, #0e1b18 0)`;
+ saveDraft();
+}
+
+function renderHRStep(){
+ const r=$("rec").value, el=$("hrstep");
+ if(r==="Renew"||r==="Renew with conditions"){
+   el.className="hrstep go";
+   el.innerHTML="<b>Extend the MoU.</b> DLF MoU runs 6 months, extendable to 18. Route a fresh/extended MoU to <b>Shourya Roy (ED)</b> for signature; Accounts updates the HR Master Register and TDS setup."+(r==="Renew with conditions"?" Record the conditions in the forward notes and set a 30‑day check‑in.":"");
+ }else if(r==="Hold / discuss"){
+   el.className="hrstep hold";
+   el.innerHTML="<b>Hold.</b> Don't start offboarding yet — schedule a focused follow‑up, give written expectations and a short timeline, then decide.";
+ }else if(r==="Do not renew"){
+   el.className="hrstep gate";
+   el.innerHTML="<b>Offboarding — HARD GATE.</b> Exit interview → <b>Accounts clearance (Shashwat)</b> + <b>Program/HR clearance (Anupriya)</b> + <b>asset return</b>, then ED issues the NOC. No NOC until both clearances are signed and all assets are returned. Re‑sign the confidentiality undertaking; treat the exit with dignity.";
+ }else{ el.className="hrstep"; el.textContent="Pick a recommendation to see the HR next step."; }
+}
+
+function key(){return "assr2:"+(who.value||"none")}
+let t;
+function cur(id){const b=document.querySelector("#"+id+" button[aria-pressed=true]");return b?b.dataset.v:""}
+function collect(){
+ const o={who:who.value,lm:{},dr:{},dq:{},dn:{},de:{},stake:[],
+  wa:cur("seg_wa"),ver:cur("seg_ver"),clr:cur("seg_clr"),
+  traj:cur("seg_traj"),pot:cur("seg_pot"),calib:cur("seg_calib"),
+  report:$("a_report").value,strategy:$("a_strategy").value,media:$("a_media").value,net:$("a_net").value,comm:$("a_comm").value,times:$("a_times").value,
+  f_peer:$("f_peer").value,f_community:$("f_community").value,f_pos:$("f_pos").value,f_concern:$("f_concern").value,
+  g_strength:$("g_strength").value,g_dev:$("g_dev").value,g_calib_note:$("g_calib_note").value,
+  appr:$("a_appr").value,vby:$("a_vby").value,fwd:$("a_fwd").value,rec:$("rec").value};
+ INDICATORS.forEach(i=>{o.lm[i.key]=$("lm_"+i.key).value;o.dr[i.key]=$("dr_"+i.key).value});
+ DIMS.forEach(d=>{o.dq[d.key]=$("dq_"+d.key).value;o.dn[d.key]=$("dn_"+d.key).value;o.de[d.key]=$("de_"+d.key).value});
+ STAKEHOLDERS.forEach((s,i)=>{if(document.querySelector('#stake .chip[data-i="'+i+'"]').getAttribute("aria-pressed")==="true")o.stake.push(s)});
+ if(SELF)o._self=SELF;
+ return o;
+}
+function saveDraft(){clearTimeout(t);t=setTimeout(()=>{if(!who.value)return;try{stor.set(key(),JSON.stringify(collect()))}catch(e){}},400);}
+async function loadDraft(){
+ try{ if(!who.value)return;
+   const raw=await stor.get(key()); if(!raw)return; const o=JSON.parse(raw);
+   INDICATORS.forEach(i=>{$("lm_"+i.key).value=o.lm?.[i.key]||0;$("lm_"+i.key).dispatchEvent(new Event('input'));$("dr_"+i.key).value=o.dr?.[i.key]||0;$("dr_"+i.key).dispatchEvent(new Event('input'))});
+   DIMS.forEach(d=>{$("dq_"+d.key).value=o.dq?.[d.key]||0;$("dq_"+d.key).dispatchEvent(new Event('input'));$("dn_"+d.key).value=o.dn?.[d.key]||"";$("de_"+d.key).value=o.de?.[d.key]||""});
+   $("a_report").value=o.report||"";$("a_strategy").value=o.strategy||"";$("a_media").value=o.media||"";$("a_net").value=o.net||"";$("a_comm").value=o.comm||"";$("a_times").value=o.times||"";$("a_appr").value=o.appr||"";$("a_vby").value=o.vby||"";$("a_fwd").value=o.fwd||"";$("rec").value=o.rec||"";
+   $("f_peer").value=o.f_peer||"";$("f_community").value=o.f_community||"";$("f_pos").value=o.f_pos||"";$("f_concern").value=o.f_concern||"";
+   $("g_strength").value=o.g_strength||"";$("g_dev").value=o.g_dev||"";$("g_calib_note").value=o.g_calib_note||"";
+   ["seg_wa","seg_ver","seg_clr"].forEach((sg,idx)=>{const val=[o.wa,o.ver,o.clr][idx];if(val)document.querySelectorAll("#"+sg+" button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===val))});
+   ["seg_traj","seg_pot","seg_calib"].forEach((sg,idx)=>{const val=[o.traj,o.pot,o.calib][idx];if(val)document.querySelectorAll("#"+sg+" button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===val))});
+   o.stake?.forEach(s=>{const i=STAKEHOLDERS.indexOf(s);if(i>=0)document.querySelector('#stake .chip[data-i="'+i+'"]').setAttribute("aria-pressed","true")});
+   if(o._self){SELF=o._self;$("paste").value="";reflectSelf()}
+   renderHRStep();recompute();
+ }catch(e){}
+}
+
+function masterRow(){
+ const o=collect();const s=SELF||{};const sc=s.scores||{},dm=s.dims||{};
+ let lm=0,dq=0,qual=0;INDICATORS.forEach(i=>{lm+=+o.lm[i.key];dq+=+o.dr[i.key]});DIMS.forEach(d=>qual+=+o.dq[d.key]);
+ const f=FELLOWS[o.who]||{};
+ const hrTextMap={"Renew":"Extend MoU → ED signs; Accounts updates register","Renew with conditions":"Extend MoU with conditions; 30-day check-in; ED signs","Hold / discuss":"Hold; written expectations + timeline; decide later","Do not renew":"Offboard: Accounts + Program/HR clearance + asset return → ED NOC (hard gate)"};
+ const cell={"Timestamp":new Date().toLocaleString(),"Fellow":o.who,"Role":f.role||s.role||"","District":f.dist||s.dist||"","Stage":"Assessor-final",
+  "Self: LAC /10":sc.lac,"Self: Trainings /10":sc.train,"Self: Fact-finding /10":sc.ff,"Self: Media screenings /10":sc.media,"Self: PIL /10":sc.pil,"Self: Cases /10":sc.cases,
+  "Self: Experience":dm.exp,"Self: Challenges & overcome":dm.chal,"Self: Learnings":dm.learn,"Self: Impact":dm.impact,"Self: Teamwork":dm.team,
+  "Self: Reporting bottleneck":s.report,"Self: Case strategy":s.strategy,"Self: Media screenings — outcomes":s.media,"Self: Networking — organisations":s.neto,"Self: Networking — officials/govt":s.netg,
+  "Self: WhatsApp use":(s.wa?s.wa+(s.wa_note?" — "+s.wa_note:""):""),"Self: Times strategised":s.times,"Self: Stakeholders engaged":(s.stake||[]).join("; "),"Self: Community work":s.comm,
+  "Self: Assets currently held":s.assets,"Self: Confidentiality affirmed":s.conf,"Self: Concern to raise":s.concern,"Self: Suggestions":s.sugg,
+  "Self: Advance":s.adv,"Self: Claimed":s.claim,"Self: Pending docs":s.pend,
+  "Assr: LM total /60":lm,"Assr: Director quant /60":dq,"Assr: Director qual /60":qual,"Assr: Composite /120":dq+qual,
+  "Assr: Experience note":o.dn.exp,"Assr: Challenges note":o.dn.chal,"Assr: Learnings note":o.dn.learn,"Assr: Impact note":o.dn.impact,"Assr: Teamwork note":o.dn.team,"Assr: Conduct & safeguarding note":o.dn.conduct,
+  "Assr: Reporting note":o.report,"Assr: Case-strategy note":o.strategy,"Assr: Media screenings note":o.media,"Assr: Networking note":o.net,"Assr: WhatsApp (Y/N)":o.wa,"Assr: Times strategised":o.times,"Assr: Community note":o.comm,"Assr: Stakeholders engaged":o.stake.join("; "),
+  "Exp: Verified (Y/N)":o.ver,"Exp: Approved":o.appr,"Exp: Cleared to pay":o.clr,"Exp: Verified by":o.vby,
+  "Assr: B — Exp evidence":o.de?.exp||"","Assr: B — Chal evidence":o.de?.chal||"","Assr: B — Learn evidence":o.de?.learn||"","Assr: B — Impact evidence":o.de?.impact||"","Assr: B — Team evidence":o.de?.team||"","Assr: B — Conduct evidence":o.de?.conduct||"","Assr: 360 — Co-fellow voice":o.f_peer||"","Assr: 360 — Community voice":o.f_community||"","Assr: 360 — Positive incident":o.f_pos||"","Assr: 360 — Concern":o.f_concern||"","Assr: Trajectory":o.traj||"","Assr: Movement potential":o.pot||"","Assr: Core strength":o.g_strength||"","Assr: Dev priority":o.g_dev||"","Assr: Self-calibration":o.calib||"","Assr: Self-calibration note":o.g_calib_note||"","Renewal recommendation":o.rec,"HR next step":(hrTextMap[o.rec]||""),"Director forward notes":o.fwd,"MIS flag":f.flag||""};
+ return COLS.map(c=>clean(cell[c]!==undefined?cell[c]:""));
+}
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1700)}
+async function copy(txt){try{await navigator.clipboard.writeText(txt);return true}catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove();return true}}
+
+$("codeBtn").onclick=()=>{ if(!who.value){toast("Select a fellow first");return} $("code").value="DLFA1::"+btoa(encodeURIComponent(JSON.stringify(collect()))); $("dlg").dataset.row=JSON.stringify(masterRow()); $("dlg").showModal(); };
+$("rowBtn").onclick=async()=>{ if(!who.value){toast("Select a fellow first");return} await copy(masterRow().join("\t")); toast("Master row copied — paste into the Sheet"); };
+$("copyRow2").onclick=async()=>{await copy(JSON.parse($("dlg").dataset.row).join("\t"));toast("Master row copied")};
+$("copyCode2").onclick=async()=>{await copy($("code").value);toast("Code copied")};
+$("closeDlg").onclick=()=>$("dlg").close();
+$("csvBtn").onclick=()=>{ if(!who.value){toast("Select a fellow first");return}
+ const row=masterRow();function q(s){s=String(s);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+ const csv=[COLS.map(q).join(","),row.map(q).join(",")].join("\n");
+ const blob=new Blob([csv],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=("Review_"+(who.value||"fellow")).replace(/\W+/g,"_")+".csv";a.click(); };
+$("resetBtn").onclick=async()=>{ if(!who.value){location.reload();return} if(!confirm("Clear this fellow's draft?"))return; try{await stor.del(key())}catch(e){} SELF=null; location.reload(); };
+
+renderMIS();renderHRStep();recompute();
+</script>
+</body>
+</html>
