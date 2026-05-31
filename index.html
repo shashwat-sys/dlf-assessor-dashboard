@@ -321,6 +321,7 @@ const COLS=["Timestamp","Fellow","Role","District","Stage","Self: LAC /10","Self
 const $=id=>document.getElementById(id);
 const clean=v=>(v==null?"":String(v)).replace(/[\t\n\r]+/g," ").trim();
 let SELF=null;
+const BACKEND=''; // paste your Apps Script URL here
 // storage helper: Cowork SDK with localStorage fallback
 const stor={
   get:async k=>{if(window.storage){const r=await window.storage.get(k);return r?.value??null;}try{return localStorage.getItem(k)}catch(e){return null}},
@@ -377,18 +378,32 @@ function renderMIS(){
  INDICATORS.forEach(i=>{$("rp_"+i.key).textContent="rp "+(i.mis?f.mis[i.mis]:"–")});
 }
 
-$("importBtn").onclick=()=>{
- const raw=$("paste").value.trim(); if(!raw){toast("Paste the fellow's code first");return}
- try{
-   const json=(raw.startsWith("DLF1::")?raw.slice(6):raw).replace(/\s/g,"");
-   const o=JSON.parse(decodeURIComponent(atob(json)));
-   SELF=o;
+$("importBtn").onclick=async()=>{
+ const raw=$("paste").value.trim(); if(!raw){toast("Enter the fellow's code first");return}
+ if(BACKEND&&/^d{4,5}$/.test(raw)){
+  try{
+   const r=await fetch(BACKEND+"?code="+raw);
+   const j=await r.json(); if(!j.success)throw new Error(j.error||"Code not found");
+   const o=j.data; SELF=o; $("paste").value="";
    if(o.who&&FELLOWS[o.who]){who.value=o.who;renderMIS();$("curwho").textContent=o.who;loadDraft();}
    reflectSelf();
    (o.stake||[]).forEach(s=>{const i=STAKEHOLDERS.indexOf(s);if(i>=0)document.querySelector('#stake .chip[data-i="'+i+'"]').setAttribute("aria-pressed","true")});
-   if(o.wa){document.querySelectorAll("#seg_wa button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===o.wa))}
+   if(o.wa)document.querySelectorAll("#seg_wa button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===o.wa));
    if(o.times&&!$("a_times").value)$("a_times").value=o.times;
-   toast("Self‑assessment loaded ✓"); saveDraft();
+   toast("Loaded: "+(o.who||raw)+" ✓"); saveDraft();
+  }catch(e){toast("Code not found: "+e.message);}
+  return;
+ }
+ try{
+  const json=(raw.startsWith("DLF1::")?raw.slice(6):raw).replace(/s/g,"");
+  const o=JSON.parse(decodeURIComponent(atob(json)));
+  SELF=o;
+  if(o.who&&FELLOWS[o.who]){who.value=o.who;renderMIS();$("curwho").textContent=o.who;loadDraft();}
+  reflectSelf();
+  (o.stake||[]).forEach(s=>{const i=STAKEHOLDERS.indexOf(s);if(i>=0)document.querySelector('#stake .chip[data-i="'+i+'"]').setAttribute("aria-pressed","true")});
+  if(o.wa)document.querySelectorAll("#seg_wa button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===o.wa));
+  if(o.times&&!$("a_times").value)$("a_times").value=o.times;
+  toast("Self‑assessment loaded ✓"); saveDraft();
  }catch(e){toast("Couldn't read that code")}
 };
 function quote(tag,txt){txt=clean(txt);return '<span class="tagq">'+tag+'</span>'+(txt?txt:"—")}
