@@ -58,7 +58,7 @@ select:focus,input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0
 .scoreunit label{font:600 11.5px/1 "Karla";color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .srow{display:flex;align-items:center;gap:12px;margin-top:5px}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;cursor:pointer}
-input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--clr,var(--green)) var(--p,0%),#0e1b18 var(--p,0%));border:1px solid var(--line2)}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:#0e1b18;border:1px solid var(--line2)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;margin-top:-8px;width:22px;height:22px;border-radius:50%;background:#fbf6ea;border:2.4px solid var(--clr,var(--green))}
 input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:#0e1b18;border:1px solid var(--line2)}
 input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fbf6ea;border:2.4px solid var(--clr,var(--green))}
@@ -340,7 +340,7 @@ $("scorecard").innerHTML=INDICATORS.map(i=>`
      <div class="scoreunit"><label>Director</label><div class="srow"><input type="range" min="0" max="10" value="0" id="dr_${i.key}" style="--clr:var(--saff)"><span class="sv" id="drv_${i.key}">0</span></div></div>
    </div>
  </div>`).join("")+`<div class="totline"><span>LM total <b id="lmtot2">0</b>/60</span><span>Director total <b id="drtot2">0</b>/60</span></div>`;
-INDICATORS.forEach(i=>{["lm","dr"].forEach(k=>{const r=$(k+"_"+i.key);const v=$(k+"v_"+i.key);const f=()=>{v.textContent=r.value;r.style.setProperty('--p',(r.value*10)+'%');recompute()};r.oninput=f;f();});});
+INDICATORS.forEach(i=>{["lm","dr"].forEach(k=>{const r=$(k+"_"+i.key);const v=$(k+"v_"+i.key);const clr=k==="lm"?"#7fb069":"#e2902f";const sid="_as_"+k+"_"+i.key;const f=()=>{const pct=r.value*10;v.textContent=r.value;let st=document.getElementById(sid);if(!st){st=document.createElement('style');st.id=sid;document.head.appendChild(st);}st.textContent=`#${k}_${i.key}::-webkit-slider-runnable-track{background:linear-gradient(90deg,${clr} ${pct}%,#0e1b18 ${pct}%)}`;recompute();};r.oninput=f;r.onchange=f;f();});});
 
 $("qual").innerHTML=DIMS.map(d=>`
  <div class="qd">
@@ -356,7 +356,7 @@ $("qual").innerHTML=DIMS.map(d=>`
      <div class="scoreunit"><label>Director /10</label><div class="srow"><input type="range" min="0" max="10" value="0" id="dq_${d.key}" style="--clr:var(--saff)"><span class="sv" id="dqv_${d.key}">0</span></div></div>
    </div>
  </div>`).join("");
-DIMS.forEach(d=>{const r=$("dq_"+d.key);const v=$("dqv_"+d.key);const f=()=>{v.textContent=r.value;r.style.setProperty('--p',(r.value*10)+'%');recompute()};r.oninput=f;f();$("dn_"+d.key).oninput=saveDraft;$("de_"+d.key).oninput=saveDraft;});
+DIMS.forEach(d=>{const r=$("dq_"+d.key);const v=$("dqv_"+d.key);const sid="_as_dq_"+d.key;const f=()=>{const pct=r.value*10;v.textContent=r.value;let st=document.getElementById(sid);if(!st){st=document.createElement('style');st.id=sid;document.head.appendChild(st);}st.textContent=`#dq_${d.key}::-webkit-slider-runnable-track{background:linear-gradient(90deg,#e2902f ${pct}%,#0e1b18 ${pct}%)}`;recompute();};r.oninput=f;r.onchange=f;f();$("dn_"+d.key).oninput=saveDraft;$("de_"+d.key).oninput=saveDraft;});
 
 $("stake").innerHTML=STAKEHOLDERS.map((s,i)=>`<span class="chip" data-i="${i}" aria-pressed="false">${s}</span>`).join("");
 document.querySelectorAll("#stake .chip").forEach(c=>c.onclick=()=>{c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true");saveDraft()});
@@ -380,7 +380,7 @@ function renderMIS(){
 $("importBtn").onclick=()=>{
  const raw=$("paste").value.trim(); if(!raw){toast("Paste the fellow's code first");return}
  try{
-   const json=raw.startsWith("DLF1::")?raw.slice(6):raw;
+   const json=(raw.startsWith("DLF1::")?raw.slice(6):raw).replace(/\s/g,"");
    const o=JSON.parse(decodeURIComponent(atob(json)));
    SELF=o;
    if(o.who&&FELLOWS[o.who]){who.value=o.who;renderMIS();$("curwho").textContent=o.who;loadDraft();}
