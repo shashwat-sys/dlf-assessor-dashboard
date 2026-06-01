@@ -428,8 +428,8 @@ function reflectSelf(){
 }
 
 function recompute(){
- let lm=0,dq=0;INDICATORS.forEach(i=>{lm+=+$("lm_"+i.key).value;dq+=+$("dr_"+i.key).value});
- let qual=0;DIMS.forEach(d=>qual+=+$("dq_"+d.key).value);
+ let lm=0,dq=0;INDICATORS.forEach(i=>{const a=$("lm_"+i.key),b=$("dr_"+i.key);if(a)lm+=+a.value;if(b)dq+=+b.value});
+ let qual=0;DIMS.forEach(d=>{const a=$("dq_"+d.key);if(a)qual+=+a.value});
  const comp=dq+qual;
  $("lmtot").textContent=lm;$("lmtot2").textContent=lm;$("dqtot").textContent=dq;$("drtot2").textContent=dq;$("dqual").textContent=qual;
  $("composite").textContent=comp;
